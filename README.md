@@ -1,7 +1,12 @@
 <!-- omit in toc -->
 # Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2
 
-This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2" (Paper in writing)
+This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2" (in writing)
+
+Authors (equal contribution):
+- [Aryo Pradipta Gema](https://aryopg.github.io/)
+- [Michał Kobiela](https://www.linkedin.com/in/michal-kobiela137/)
+- [Achille Fraisse](https://www.linkedin.com/in/achille-fraisse-4b3b11210/?originalSubdomain=fr)
 
 <!-- omit in toc -->
 ## Table of Contents
