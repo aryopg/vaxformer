@@ -8,6 +8,7 @@ This repository contains pre-trained models, corpora, indices, and code for pre-
 - [🛠️ Setup](#️-setup)
   - [Python packages](#python-packages)
   - [netMHCpan](#netmhcpan)
+  - [DDGun](#ddgun)
   - [Alphafold 2](#alphafold-2)
   - [Dataset](#dataset)
 - [⌨️ Codebase Structure](#️-codebase-structure)
@@ -16,7 +17,7 @@ This repository contains pre-trained models, corpora, indices, and code for pre-
   - [Training the model](#training-the-model)
 - [📝 Generating sequences](#-generating-sequences)
 - [📈 Evaluation](#-evaluation)
-  - [DDGun](#ddgun)
+  - [DDGun](#ddgun-1)
   - [netMHCpan](#netmhcpan-1)
   - [AlphaFold 2](#alphafold-2-1)
 
@@ -55,8 +56,11 @@ Follow this step to setup netMHCpan:
 1. Download https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/
 2. Follow their installation instruction outlined in the `netMHCpan-4.1.readme` file
 
+### DDGun
+TODO: Michal
 
 ### Alphafold 2
+TODO: Michal
 
 
 ### Dataset
@@ -104,9 +108,32 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 
 ### Prepare the dataset
 
+Once you obtained the dataset, you need to first run netMHCpan to all sequences to compute the immunogenicity scores. First, you need to generate 9-mer peptides of each sequence of each dataset split:
+```
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/TRAIN_DATASET.txt
+
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/VALID_DATASET.txt
+
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/TEST_DATASET.txt
 ```
 
+These runs will create `.pep` files containing 9-mer peptides for each sequences which then can be passed to the netMHCpan:
 ```
+cd scripts/netmhcpan/
+bash netmhcpan_allele_scores.sh PATH/TO/TRAIN_DATASET_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores.sh PATH/TO/VALID_DATASET_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores.sh PATH/TO/TEST_DATASET_PEPTIDES_FILE.pep
+```
+
+These runs will create `.pep.out` files which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
+```
+TODO: Achille
+```
+
+These quantiles are used as the immunogenicity scores of the model training.
 
 ### Training the model
 Once the sequences and immunogenicity scores datasets are obtained, we can run a training process.
@@ -134,13 +161,27 @@ Examples of test config files can be found in the [`configs/test/`](https://gith
 
 
 ### DDGun
+TODO: Michal
 
 
 ### netMHCpan
-To evaluate the generated the netMHCpan
+To evaluate the immunogenicity level of the generated sequences, we need to first generate 9-mer peptides for each generated sequences
+```
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/GENERATED_SEQUENCES.txt
 ```
 
+This run will create a `.pep` file. Next, we need to run the netMHCpan scoring script:
+```
+cd scripts/netmhcpan/
+bash netmhcpan_allele_scores.sh PATH/TO/GENERATED_PEPTIDES_FILE.pep
+```
+
+This run will create a `.pep.out` file which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
+```
+TODO: Achille
 ```
 
 ### AlphaFold 2
+TODO: Michal
 
