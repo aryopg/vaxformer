@@ -1,0 +1,16 @@
+dataset_configs:
+  train:
+    sequences_path: ./datasets/spikeprot_train.txt
+    immunogenicity_scores_path: ./datasets/train_scores.npy
+  val:
+    sequences_path: ./datasets/spikeprot_valid.txt
+    immunogenicity_scores_path: ./datasets/valid_scores.npy
+  test:
+    sequences_path: ./datasets/spikeprot_test.txt
+    immunogenicity_scores_path: ./datasets/test_scores.npy
+testing_configs:
+  device: 0
+  random_seed: 1234
+  outputs_dir: "sample_outputs"
+  pretrained_model_state_dict_path: outputs/2023_03_15__11_54_21/checkpoint_100.pt
+  pretrained_model_configs_path: outputs/2023_03_15__12_00_02/configs.yaml
