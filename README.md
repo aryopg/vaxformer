@@ -57,10 +57,21 @@ Follow this step to setup netMHCpan:
 2. Follow their installation instruction outlined in the `netMHCpan-4.1.readme` file
 
 ### DDGun
-TODO: Michal
+
+We included DDGun as a submodule to this repo. To install, you need to:
+```
+# Clone the DDGun submodule
+git submodule update --init --recursive
+
+# Install DDGun
+cd submodules/ddgun
+python setup.py
+```
 
 ### Alphafold 2
 TODO: Michal
+1. Install [PyMol](https://pymol.org/2/)
+2. Install AlphaFold
 
 
 ### Dataset
@@ -128,12 +139,29 @@ bash netmhcpan_allele_scores.sh PATH/TO/VALID_DATASET_PEPTIDES_FILE.pep
 bash netmhcpan_allele_scores.sh PATH/TO/TEST_DATASET_PEPTIDES_FILE.pep
 ```
 
-These runs will create `.pep.out` files which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
+These runs will create `.pep.out` files which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the hits scores of each sequence:
 ```
-TODO: Achille
+python scripts/netmhcpan/compute_hits_from_peptides.py \
+--sequences_filepath=PATH/TO/TRAIN_DATASET.txt \
+--peptides_dir=PATH/TO/TRAIN_PEPTIDES_DIR/ \
+--peptide_file_prefix=TRAIN_PEPTIDE_FILE_PREFIX
+
+python scripts/netmhcpan/compute_hits_from_peptides.py \
+--sequences_filepath=PATH/TO/VALID_DATASET.txt \
+--peptides_dir=PATH/TO/VALID_PEPTIDES_DIR/ \
+--peptide_file_prefix=VALID_PEPTIDE_FILE_PREFIX
+
+python scripts/netmhcpan/compute_hits_from_peptides.py \
+--sequences_filepath=PATH/TO/TEST_DATASET.txt \
+--peptides_dir=PATH/TO/TEST_PEPTIDES_DIR/ \
+--peptide_file_prefix=TEST_PEPTIDE_FILE_PREFIX
 ```
 
-These quantiles are used as the immunogenicity scores of the model training.
+Each of the peptide files that are generated from the previous command would have a prefix. For instance, from the previous commands you obtained 12 files (`vaxformer_large_A0101.pep.out`, ... , `vaxformer_large_B5801.pep.out`), then the peptide file prefix is `vaxformer_large`.
+
+Practically, we can obtain quantiles from the distribution of hits of the training data split. For the sake of simplicity and reproducibility (and sanity check), you can check the Q1 and Q3 that we used to calculate the immunogenicity scores in the [`src/constants.py`](https://github.com/aryopg/vaxformer/tree/main/src/constants.py) which are denoted as `IMMUNOGENICITY_Q1` and `IMMUNOGENICITY_Q3` respectively.
+
+These quantiles are used to compute the immunogenicity scores of each sequence. Sequences whose scores are lower than the Q1 are considered to have low immunogenicity scores (0), in between Q1 and Q3 are intermediate immunogenicity scores (1), and above Q3 are high immunogenicity scores (3).
 
 ### Training the model
 Once the sequences and immunogenicity scores datasets are obtained, we can run a training process.
@@ -179,9 +207,17 @@ bash netmhcpan_allele_scores.sh PATH/TO/GENERATED_PEPTIDES_FILE.pep
 
 This run will create a `.pep.out` file which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
 ```
-TODO: Achille
+python scripts/netmhcpan/compute_hits_from_peptides.py \
+--sequences_filepath=PATH/TO/GENERATED_SEQUENCES.fasta \
+--peptides_dir=PATH/TO/PEPTIDES_DIR/ \
+--peptide_file_prefix=PEPTIDE_FILE_PREFIX
 ```
 
 ### AlphaFold 2
 TODO: Michal
-
+1. Fold the proteins
+2. Open PyMol and open the proteins and run:
+```
+align wuhan_alphafold, alpha_alphafold, cycles=0, transform=0
+```
+where `wuhan_alphafold` denotes the reference protein and `alpha_alphafold` denotes the generated protein.

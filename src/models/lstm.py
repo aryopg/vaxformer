@@ -97,13 +97,6 @@ class VaxLSTM(nn.Module):
 
         prediction = self.forward(input_sequences, hidden, immunogenicity_scores)
         loss = F.nll_loss(prediction, output_sequences.contiguous().view(-1))
-        # loss = 0
-        # for i in range(input_sequences.size(0)):
-        #     output, hidden = self.forward(
-        #         input_sequences[:, i], hidden, immunogenicity_scores
-        #     )
-        #     step_loss = F.nll_loss(output, output_sequences[:, i])
-        #     loss += step_loss
 
         return {"loss": loss, "perplexity": torch.exp(loss)}
 
@@ -121,7 +114,7 @@ class VaxLSTM(nn.Module):
             batch_size = num_sequences
 
         for idx in tqdm(range(0, num_sequences, batch_size)):
-            hidden = self.generator.init_hidden(batch_size)
+            hidden = self.init_hidden(batch_size)
             input_sequences = torch.LongTensor([self.start_idx] * batch_size).unsqueeze(
                 dim=1
             )
@@ -132,7 +125,7 @@ class VaxLSTM(nn.Module):
             ).to(self.device)
 
             for i in tqdm(range(self.max_seq_len)):
-                out, hidden = self.generator.forward(
+                out, hidden = self.forward(
                     input_sequences,
                     hidden,
                     immunogenicity_scores,

@@ -1,0 +1,3 @@
+[submodule "submodules/ddgun"]
+	path = submodules/ddgun
+	url = https://github.com/biofold/ddgun
