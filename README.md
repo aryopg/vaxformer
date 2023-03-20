@@ -55,7 +55,7 @@ pip install -r requirements.txt
 ### netMHCpan
 > **Note**
 > 
-> netMHCpan only runs in Linux or Darwin machine
+> netMHCpan only runs on Linux or Darwin machine
 
 Follow this step to setup netMHCpan:
 1. Download https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/
@@ -198,6 +198,9 @@ Examples of test config files can be found in the [`configs/test/`](https://gith
 
 ### DDGun
 TODO: Michal
+```
+python3 ddgun_seq.py wuhan_ddgan.fasta alpha_ddgan_mutations > output.txt
+```
 
 
 ### netMHCpan
