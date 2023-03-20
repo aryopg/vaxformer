@@ -88,6 +88,7 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 ├── scripts                                       # Scripts to start runs
 │   ├── netmhcpan/
 │   │   ├── netmhcpan_allele_scores.sh            # Script to run netMHCpan scoring for peptide files
+│   │   ├── compute_hits_from_peptides.py         # Script to compute netMHCpan hits and scores from peptides
 │   │   ├── generate_peptides_from_sequences.py   # Script to generate peptides from sequences
 │   ├── slurm/                                    # Slurm scripts for training and sampling runs
 │   ├── sample.py                                 # Script to run sampling with a model of choice
@@ -111,6 +112,8 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 │   ├── configs.py                                # Pydantic configs validator
 │   ├── constants.py                              # Constants for the training
 │   └── trainer.py                                # Trainer class to handle training operations
+├── submodules
+│   └── ddgun/                                    # The DDGun package that we use for one of the evaluations
 ├── requirements.txt                              # Necessary Python Packages
 ├── README.md                                     # You are here
 ```
