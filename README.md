@@ -141,9 +141,9 @@ python scripts/netmhcpan/generate_peptides_from_sequences.py \
 These runs will create `.pep` files containing 9-mer peptides for each sequences which then can be passed to the netMHCpan:
 ```
 cd scripts/netmhcpan/
-bash netmhcpan_allele_scores.sh PATH/TO/TRAIN_DATASET_PEPTIDES_FILE.pep
-bash netmhcpan_allele_scores.sh PATH/TO/VALID_DATASET_PEPTIDES_FILE.pep
-bash netmhcpan_allele_scores.sh PATH/TO/TEST_DATASET_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores_one_file.sh PATH/TO/TRAIN_DATASET_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores_one_file.sh PATH/TO/VALID_DATASET_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores_one_file.sh PATH/TO/TEST_DATASET_PEPTIDES_FILE.pep
 ```
 
 These runs will create `.pep.out` files which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the hits scores of each sequence:
@@ -206,22 +206,33 @@ Examples of test config files can be found in the [`configs/test/`](https://gith
 To evaluate the immunogenicity level of the generated sequences, we need to first generate 9-mer peptides for each generated sequences
 ```
 python scripts/netmhcpan/generate_peptides_from_sequences.py \
---sequences_filepath=PATH/TO/GENERATED_SEQUENCES.txt
+--sequences_filepath=PATH/TO/FULL_GENERATED_LOW_IMMUNO_SEQUENCES.txt
+
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/FULL_GENERATED_INTERMEDIATE_IMMUNO_SEQUENCES.txt
+
+python scripts/netmhcpan/generate_peptides_from_sequences.py \
+--sequences_filepath=PATH/TO/FULL_GENERATED_HIGH_IMMUNO_SEQUENCES.txt
 ```
 
-This run will create a `.pep` file. Next, we need to run the netMHCpan scoring script:
+This run will create 3 `.pep` files (low, intermediate, and high). Next, we need to run the netMHCpan scoring script:
 ```
 cd scripts/netmhcpan/
-bash netmhcpan_allele_scores.sh PATH/TO/GENERATED_PEPTIDES_FILE.pep
+bash netmhcpan_allele_scores.sh PATH/TO/PEP_FILES_DIRECTORY/
 ```
 
-This run will create a `.pep.out` file which contains the immunogenicity score for each peptides. Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
+This run will create a `combined.pep` file (in the same directory) which contains the concatenation of low, intermediate, and high peptides (**in that order**). The `combined.pep` file will then be passed to the netMHCpan computation. This will results in 12 MHC files that are scored.
+Notice that this run is different from the train-valid-test data preparation as this is designed to concatenate generated sequences across different immunogenicity scores mainly to understand the distribution of each immunogenicity score.
+
+Finally, we need to reconcile the peptides into sequences and calculate the score quantiles:
 ```
 python scripts/netmhcpan/compute_hits_from_peptides.py \
 --sequences_filepath=PATH/TO/GENERATED_SEQUENCES.fasta \
 --peptides_dir=PATH/TO/PEPTIDES_DIR/ \
---peptide_file_prefix=PEPTIDE_FILE_PREFIX
+--peptide_file_prefix=combined
 ```
+
+Similar to the train-valid-test data preparation process, each peptide file that is generated would have a prefix. In this case, it would be `combined`.
 
 ### AlphaFold 2
 1. Fold the proteins using alphafold.sh provided in scripts folder
