@@ -1,5 +1,5 @@
 device: 0
 random_seed: 1234
 outputs_dir: "sample_outputs"
-pretrained_model_state_dict_path: train_outputs/2023_03_20__14_02_20/checkpoint/checkpoint_100.pt
-pretrained_model_configs_path: train_outputs/2023_03_20__14_02_20/configs.yaml
+pretrained_model_state_dict_path: train_outputs/2023_03_20__13_55_24/checkpoint/checkpoint_100.pt
+pretrained_model_configs_path: train_outputs/2023_03_20__13_55_24/configs.yaml

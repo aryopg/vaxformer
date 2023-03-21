@@ -112,17 +112,17 @@ def main():
         generated_seqs = {
             "low": train_dataset.tokenizer.decode(
                 model.generate_sequences(
-                    args.num_sequences, 0, temperature=0.8, batch_size=1000
+                    args.num_sequences, 0, temperature=0.8, batch_size=500
                 )
             ),
             "intermediate": train_dataset.tokenizer.decode(
                 model.generate_sequences(
-                    args.num_sequences, 1, temperature=0.8, batch_size=1000
+                    args.num_sequences, 1, temperature=0.8, batch_size=500
                 )
             ),
             "high": train_dataset.tokenizer.decode(
                 model.generate_sequences(
-                    args.num_sequences, 2, temperature=0.8, batch_size=1000
+                    args.num_sequences, 2, temperature=0.8, batch_size=500
                 )
             ),
         }
