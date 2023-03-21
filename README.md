@@ -260,14 +260,14 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 
 ### Perplexity
 
-| Model           | Train | Val.  |
-|-----------------|-------|-------|
-| LSTM-small      | 1.019 | 1.021 |
-| LSTM-base       | 1.016 | 1.018 |
-| LSTM-large      | 1.016 | 1.019 |
-| Vaxformer-small | 1.052 | 1.049 |
-| Vaxformer-base  | 1.015 | 1.026 |
-| Vaxformer-large | 1.013 | 1.014 |
+| Model               | Train     | Val.      |
+|---------------------|-----------|-----------|
+| LSTM-small          | 1.019     | 1.021     |
+| LSTM-base           | 1.016     | 1.018     |
+| LSTM-large          | 1.016     | 1.019     |
+| Vaxformer-small     | 1.052     | 1.049     |
+| Vaxformer-base      | 1.015     | 1.026     |
+| **Vaxformer-large** | **1.013** | **1.014** |
 
 ### DDGun
 
