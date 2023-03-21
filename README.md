@@ -227,6 +227,6 @@ python scripts/netmhcpan/compute_hits_from_peptides.py \
 1. Fold the proteins using alphafold.sh provided in scripts folder
 2. Open PyMol, open the proteins and run:
 ```
-align wuhan_folded, protein_to_evaluate, cycles=0, transform=0
+align wuhan_folded, protein_to_evaluate
 ```
 where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` denotes the generated protein.
