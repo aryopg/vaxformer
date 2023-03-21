@@ -1,0 +1,1 @@
+for i in {0..999}; do ./ddgun_seq.py "p/seq$i.fasta" "p/seq$i.mut"  > "result$i.txt" ; done

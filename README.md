@@ -74,9 +74,8 @@ python setup.py
 ```
 
 ### Alphafold 2
-TODO: Michal
 1. Install [PyMol](https://pymol.org/2/)
-2. Install AlphaFold
+2. Install alphafold2 or use HPC cluster with alphafold installed (recommended)
 
 
 ### Dataset
@@ -197,10 +196,10 @@ Examples of test config files can be found in the [`configs/test/`](https://gith
 
 
 ### DDGun
-TODO: Michal
-```
-python3 ddgun_seq.py wuhan_ddgan.fasta alpha_ddgan_mutations > output.txt
-```
+1. Use create_data_for_ddgun.ipynb provided in scripts folder to generate input for ddgun
+2. Install DDGun (https://github.com/biofold/ddgun)
+3. Use ddGun.sh provided in scripts folder
+4. dd_eval.ipynb provides functions necessary to read the output of the DDGun
 
 
 ### netMHCpan
@@ -225,10 +224,9 @@ python scripts/netmhcpan/compute_hits_from_peptides.py \
 ```
 
 ### AlphaFold 2
-TODO: Michal
-1. Fold the proteins
-2. Open PyMol and open the proteins and run:
+1. Fold the proteins using alphafold.sh provided in scripts folder
+2. Open PyMol, open the proteins and run:
 ```
-align wuhan_alphafold, alpha_alphafold, cycles=0, transform=0
+align wuhan_folded, protein_to_evaluate
 ```
-where `wuhan_alphafold` denotes the reference protein and `alpha_alphafold` denotes the generated protein.
+where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` denotes the generated protein.
