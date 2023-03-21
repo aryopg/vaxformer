@@ -25,6 +25,11 @@ Authors (equal contribution):
   - [DDGun](#ddgun-1)
   - [netMHCpan](#netmhcpan-1)
   - [AlphaFold 2](#alphafold-2-1)
+- [⚖️ Results](#️-results)
+  - [Perplexity](#perplexity)
+  - [DDGun](#ddgun-2)
+  - [AlphaFold2](#alphafold2)
+  - [netMHCpan](#netmhcpan-2)
 
 
 ## 🛠️ Setup
@@ -91,9 +96,18 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 ├── datasets/                                     # Datasets of sequences and immunogenicity scores
 ├── scripts                                       # Scripts to start runs
 │   ├── netmhcpan/
-│   │   ├── netmhcpan_allele_scores.sh            # Script to run netMHCpan scoring for peptide files
+│   │   ├── netmhcpan_allele_scores_one_file.sh   # Script to run netMHCpan scoring for multiple peptide files
+│   │   ├── netmhcpan_allele_scores.sh            # Script to run netMHCpan scoring for one peptide file
 │   │   ├── compute_hits_from_peptides.py         # Script to compute netMHCpan hits and scores from peptides
-│   │   ├── generate_peptides_from_sequences.py   # Script to generate peptides from sequences
+│   │   └── generate_peptides_from_sequences.py   # Script to generate peptides from sequences
+│   ├── evaluation/
+│   │   ├── alphafold.sh                          # Script to
+│   │   ├── ddGun.sh                              # Script to
+│   │   ├── create_data_for_ddgun.ipynb           # Notebook for 
+│   │   ├── dd_eval.ipynb                         # Notebook for 
+│   │   └── evaluation.ipynb                      # Notebook for 
+│   ├── baseline/
+│   │   └── naive_bayes.ipynb                     # Notebook for 
 │   ├── slurm/                                    # Slurm scripts for training and sampling runs
 │   ├── sample.py                                 # Script to run sampling with a model of choice
 │   └── train.py                                  # Script to run training with a model configuration of choice
@@ -241,3 +255,24 @@ Similar to the train-valid-test data preparation process, each peptide file that
 align wuhan_folded, protein_to_evaluate
 ```
 where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` denotes the generated protein.
+
+## ⚖️ Results
+
+### Perplexity
+
+| Model           | Train | Val.  |
+|-----------------|-------|-------|
+| LSTM-small      | 1.019 | 1.021 |
+| LSTM-base       | 1.016 | 1.018 |
+| LSTM-large      | 1.016 | 1.019 |
+| Vaxformer-small | 1.052 | 1.049 |
+| Vaxformer-base  | 1.015 | 1.026 |
+| Vaxformer-large | 1.013 | 1.014 |
+
+### DDGun
+
+
+### AlphaFold2
+
+
+### netMHCpan
