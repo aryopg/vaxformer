@@ -37,7 +37,7 @@ def argument_parser():
     parser = argparse.ArgumentParser(
         description="Compute hits and scores from peptides files"
     )
-    parser.add_argument("--sequences_filepath", type=str, required=True)
+    parser.add_argument("--sequences_filepath", type=str, default=None)
     parser.add_argument("--low_antigenicity_sequences_filepath", type=str, default=None)
     parser.add_argument(
         "--intermediate_antigenicity_sequences_filepath", type=str, default=None
@@ -110,7 +110,7 @@ def main():
         & args.intermediate_antigenicity_sequences_filepath
         & args.high_antigenicity_sequences_filepath
     ):
-        print("Generating 3 different score distributions")
+        print("Computing 3 different netMHCpan score distributions")
         generated_sequences_paths = [
             args.low_antigenicity_sequences_filepath,
             args.intermediate_antigenicity_sequences_filepath,
@@ -124,9 +124,18 @@ def main():
                 generated_seqs_new[immunogenicity_score].update(
                     {str(record.seq): int(record.id)}
                 )
+                seq_to_score.update({str(record.seq): int(record.id)})
 
-    for record in SeqIO.parse(args.sequences_filepath, "fasta"):
-        seq_to_score.update({str(record.seq): int(record.id)})
+    if args.sequences_filepath:
+        print("Computing netMHCpan scores for 1 sequence file")
+        if args.sequences_filepath.endswith("fasta"):
+            for record in SeqIO.parse(args.sequences_filepath, "fasta"):
+                seq_to_score.update({str(record.seq): int(record.id)})
+        elif args.sequences_filepath.endswith(".txt"):
+            with open(f"{args.sequences_filepath}") as sequences_file:
+                sequences = sequences_file.readlines()
+                for seq in sequences:
+                    seq_to_score[seq.replace("\n", "")] = 1
 
     print("Evaluating peptides for each alelle")
     nMp_peptide_scores = evaluate_peptides_netMHCpan(
