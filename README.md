@@ -38,6 +38,7 @@ This codebase requires the following dependencies:
 ```
 - biopython
 - matplotlib
+- seaborn
 - numpy
 - pandas
 - pydantic
