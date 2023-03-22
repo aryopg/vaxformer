@@ -1,5 +1,6 @@
 import argparse
 import os
+import statistics
 import sys
 from collections import defaultdict
 
@@ -164,14 +165,17 @@ def main():
 
     if generated_seqs_new:
         for immmunogenicity_score, generated_sequences in generated_seqs_new.items():
-            sns.distplot(
-                [
-                    nMp_seq_hits[seq]
-                    for seq in generated_sequences.keys()
-                    if nMp_seq_hits[seq] > 30
-                ],
-                15,
+            sequence_hits = [
+                nMp_seq_hits[seq]
+                for seq in generated_sequences.keys()
+                if nMp_seq_hits[seq] > 30
+            ]
+            print(
+                f"Statistics of sequences with immunogenicity of {immmunogenicity_score}"
             )
+            print(f"Mean: {statistics.mean(sequence_hits)}")
+            print(f"Stdev: {statistics.stdev(sequence_hits)}")
+            sns.histplot(sequence_hits, kde=True, bins=15)
 
         plt.legend(labels=["low", "medium", "high"])
         # 50.66667 nMp_seq_scores_p75: 51.16667
