@@ -102,11 +102,11 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 │   │   ├── compute_hits_from_peptides.py         # Script to compute netMHCpan hits and scores from peptides
 │   │   └── generate_peptides_from_sequences.py   # Script to generate peptides from sequences
 │   ├── evaluation/
-│   │   ├── alphafold.sh                          # Script to
-│   │   ├── ddGun.sh                              # Script to
-│   │   ├── create_data_for_ddgun.ipynb           # Notebook for 
-│   │   ├── dd_eval.ipynb                         # Notebook for 
-│   │   └── evaluation.ipynb                      # Notebook for 
+│   │   ├── alphafold.sh                          # Script to run the AlphaFold evaluation
+│   │   ├── ddGun.sh                              # Script to run the DDGun evaluation
+│   │   ├── create_data_for_ddgun.ipynb           # Notebook to create the necessary data for DDGun run
+│   │   ├── dd_eval.ipynb                         # Notebook to read the DDGun evaluation and find the top 10 proteins
+│   │   └── evaluation.ipynb                      # Notebook for PCA evaluation
 │   ├── baseline/
 │   │   └── naive_bayes.ipynb                     # Notebook for 
 │   ├── slurm/                                    # Slurm scripts for training and sampling runs
