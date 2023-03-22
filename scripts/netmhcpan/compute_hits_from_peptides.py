@@ -37,14 +37,12 @@ def argument_parser():
     parser = argparse.ArgumentParser(
         description="Compute hits and scores from peptides files"
     )
-    parser.add_argument("--sequences_filepath", type=str, default=None)
-    parser.add_argument("--low_antigenicity_sequences_filepath", type=str, default=None)
+    parser.add_argument("--sequences_filepath", type=str, default="")
+    parser.add_argument("--low_antigenicity_sequences_filepath", type=str, default="")
     parser.add_argument(
-        "--intermediate_antigenicity_sequences_filepath", type=str, default=None
+        "--intermediate_antigenicity_sequences_filepath", type=str, default=""
     )
-    parser.add_argument(
-        "--high_antigenicity_sequences_filepath", type=str, default=None
-    )
+    parser.add_argument("--high_antigenicity_sequences_filepath", type=str, default="")
     parser.add_argument("--peptides_dir", type=str, required=True)
     parser.add_argument("--peptide_file_prefix", type=str, required=True)
     args = parser.parse_args()
@@ -57,9 +55,7 @@ def evaluate_peptides_netMHCpan(peptides_dir, file_prefix):
     for mhc_idx, mhc_name in enumerate(MHC_LIST):
         mhc_name_filtered = mhc_name.replace(":", "").replace("HLA-", "")
 
-        filename = os.path.join(
-            peptides_dir, f"{file_prefix}_{mhc_name_filtered}.pep.out"
-        )
+        filename = os.path.join(peptides_dir, f"{file_prefix}_{mhc_name_filtered}.out")
         with open(filename, "r") as file:
             line_nr = 1
             lines = file.readlines()
@@ -98,17 +94,14 @@ def score_sequence_nMp_with_dashes(seq, nMp_peptide_scores):
 def main():
     args = argument_parser()
 
-    hits_save_path = args.sequences_filepath.replace(".fasta", "hits.npy")
-    scores_save_path = args.sequences_filepath.replace(".fasta", "scores.npy")
-
     seq_to_score = {}
     nMp_seq_hits = {}
     generated_seqs_new = {}
 
     if (
-        args.low_antigenicity_sequences_filepath
-        & args.intermediate_antigenicity_sequences_filepath
-        & args.high_antigenicity_sequences_filepath
+        len(args.low_antigenicity_sequences_filepath)
+        & len(args.intermediate_antigenicity_sequences_filepath)
+        & len(args.high_antigenicity_sequences_filepath)
     ):
         print("Computing 3 different netMHCpan score distributions")
         generated_sequences_paths = [
@@ -126,8 +119,11 @@ def main():
                 )
                 seq_to_score.update({str(record.seq): int(record.id)})
 
-    if args.sequences_filepath:
+    if len(args.sequences_filepath):
         print("Computing netMHCpan scores for 1 sequence file")
+        hits_save_path = args.sequences_filepath.replace(".fasta", "hits.npy")
+        scores_save_path = args.sequences_filepath.replace(".fasta", "scores.npy")
+
         if args.sequences_filepath.endswith("fasta"):
             for record in SeqIO.parse(args.sequences_filepath, "fasta"):
                 seq_to_score.update({str(record.seq): int(record.id)})
@@ -142,7 +138,7 @@ def main():
         args.peptides_dir, args.peptide_file_prefix
     )
 
-    for seq in tqdm(list(seq_to_score.keys())[:-1]):
+    for seq in tqdm(list(seq_to_score.keys())):
         nMp_seq_hits[seq], epitopes = score_sequence_nMp_with_dashes(
             seq, nMp_peptide_scores
         )
@@ -151,7 +147,8 @@ def main():
         "Hits calculated, 1st and 3rd quantiles: ",
         np.quantile(list(nMp_seq_hits.values()), [0.25, 0.75]),
     )
-    np.save(hits_save_path, nMp_seq_hits, allow_pickle=True)
+    if len(args.sequences_filepath):
+        np.save(hits_save_path, nMp_seq_hits, allow_pickle=True)
 
     nMp_scores = {}
     for sequence_key, nMp_score in nMp_seq_hits.items():
@@ -162,7 +159,8 @@ def main():
         elif nMp_score > IMMUNOGENICITY_Q3:
             nMp_scores[sequence_key] = 2
 
-    np.save(scores_save_path, nMp_scores, allow_pickle=True)
+    if len(args.sequences_filepath):
+        np.save(scores_save_path, nMp_scores, allow_pickle=True)
 
     if generated_seqs_new:
         for immmunogenicity_score, generated_sequences in generated_seqs_new.items():

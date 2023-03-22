@@ -28,6 +28,8 @@ def main():
                         continue
                 else:
                     sequence = sequence + seq_.replace("\n", "")
+            if sequence:
+                sequences += [sequence]
         else:
             raise ValueError(
                 f"Unknown file extension of {args.sequences_filepath}. Script only handles txt or fasta file"
