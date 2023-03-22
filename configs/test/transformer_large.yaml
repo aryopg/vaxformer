@@ -1,5 +1,0 @@
-device: 0
-random_seed: 1234
-outputs_dir: "sample_outputs"
-pretrained_model_state_dict_path: outputs/2023_03_16__06_08_58/checkpoint_100.pt
-pretrained_model_configs_path: outputs/2023_03_16__06_08_58/configs.yaml
