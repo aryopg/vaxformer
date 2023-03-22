@@ -11,7 +11,7 @@ from tqdm.auto import tqdm
 
 from src.constants import IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q3
 
-MHS_LIST = [
+MHC_LIST = [
     "HLA-A01:01",
     "HLA-A02:01",
     "HLA-A03:01",
@@ -39,9 +39,9 @@ def argument_parser():
 
 
 def evaluate_peptides_netMHCpan(peptides_dir, file_prefix):
-    netmhcpan_peptides = defaultdict(lambda: [None] * len(MHS_LIST))
+    netmhcpan_peptides = defaultdict(lambda: [None] * len(MHC_LIST))
 
-    for mhc_idx, mhc_name in enumerate(MHS_LIST):
+    for mhc_idx, mhc_name in enumerate(MHC_LIST):
         mhc_name_filtered = mhc_name.replace(":", "").replace("HLA-", "")
 
         filename = os.path.join(
@@ -79,7 +79,7 @@ def score_sequence_nMp_with_dashes(seq, nMp_peptide_scores):
             if mhc_rank < 2.0:
                 score += 1
                 epitopes.add(epitope)
-    return score / len(MHS_LIST), epitopes
+    return score / len(MHC_LIST), epitopes
 
 
 def main():
