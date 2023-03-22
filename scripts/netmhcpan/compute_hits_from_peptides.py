@@ -5,11 +5,16 @@ from collections import defaultdict
 
 sys.path.append(os.getcwd())
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 from Bio import SeqIO
 from tqdm.auto import tqdm
 
 from src.constants import IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q3
+
+matplotlib.rcParams.update({"font.size": 15})
 
 MHC_LIST = [
     "HLA-A01:01",
@@ -25,6 +30,7 @@ MHC_LIST = [
     "HLA-B58:01",
     "HLA-B15:01",
 ]
+KMER = 9
 
 
 def argument_parser():
@@ -32,6 +38,13 @@ def argument_parser():
         description="Compute hits and scores from peptides files"
     )
     parser.add_argument("--sequences_filepath", type=str, required=True)
+    parser.add_argument("--low_antigenicity_sequences_filepath", type=str, default=None)
+    parser.add_argument(
+        "--intermediate_antigenicity_sequences_filepath", type=str, default=None
+    )
+    parser.add_argument(
+        "--high_antigenicity_sequences_filepath", type=str, default=None
+    )
     parser.add_argument("--peptides_dir", type=str, required=True)
     parser.add_argument("--peptide_file_prefix", type=str, required=True)
     args = parser.parse_args()
@@ -55,7 +68,7 @@ def evaluate_peptides_netMHCpan(peptides_dir, file_prefix):
                 # The first 48 lines are headers
                 if line_nr >= 49 and line[5:8] == "HLA":
                     # The rank column
-                    peptide = line[22 : (22 + 9)]
+                    peptide = line[22 : (22 + KMER)]
                     # The peptide column
                     rank_el = float(line[96 : (96 + 8)])
 
@@ -72,8 +85,8 @@ def score_sequence_nMp_with_dashes(seq, nMp_peptide_scores):
     score = 0
 
     epitopes = set()
-    for position in range(len(seq) - 9):
-        epitope = seq[position : (position + 9)]
+    for position in range(len(seq) - KMER):
+        epitope = seq[position : (position + KMER)]
         entry = nMp_peptide_scores[epitope]
         for mhc_rank in entry:
             if mhc_rank < 2.0:
@@ -90,6 +103,27 @@ def main():
 
     seq_to_score = {}
     nMp_seq_hits = {}
+    generated_seqs_new = {}
+
+    if (
+        args.low_antigenicity_sequences_filepath
+        & args.intermediate_antigenicity_sequences_filepath
+        & args.high_antigenicity_sequences_filepath
+    ):
+        print("Generating 3 different score distributions")
+        generated_sequences_paths = [
+            args.low_antigenicity_sequences_filepath,
+            args.intermediate_antigenicity_sequences_filepath,
+            args.high_antigenicity_sequences_filepath,
+        ]
+        for immunogenicity_score, generated_sequences_path in enumerate(
+            generated_sequences_paths
+        ):
+            generated_seqs_new[immunogenicity_score] = {}
+            for record in SeqIO.parse(generated_sequences_path, "fasta"):
+                generated_seqs_new[immunogenicity_score].update(
+                    {str(record.seq): int(record.id)}
+                )
 
     for record in SeqIO.parse(args.sequences_filepath, "fasta"):
         seq_to_score.update({str(record.seq): int(record.id)})
@@ -120,6 +154,28 @@ def main():
             nMp_scores[sequence_key] = 2
 
     np.save(scores_save_path, nMp_scores, allow_pickle=True)
+
+    if generated_seqs_new:
+        for immmunogenicity_score, generated_sequences in generated_seqs_new.items():
+            sns.distplot(
+                [
+                    nMp_seq_hits[seq]
+                    for seq in generated_sequences.keys()
+                    if nMp_seq_hits[seq] > 30
+                ],
+                15,
+            )
+
+        plt.legend(labels=["low", "medium", "high"])
+        # 50.66667 nMp_seq_scores_p75: 51.16667
+        plt.plot(
+            [IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q1], [0, 0.15], c="black", linewidth=0.5
+        )
+        plt.plot(
+            [IMMUNOGENICITY_Q3, IMMUNOGENICITY_Q3], [0, 0.15], c="black", linewidth=0.5
+        )
+        plt.xlabel("AS distribution generated samples")
+        plt.savefig("AS distribution generated samples")
 
 
 if __name__ == "__main__":
