@@ -1,5 +1,6 @@
 import argparse
 import os
+import statistics
 import sys
 from collections import defaultdict
 
@@ -10,11 +11,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from Bio import SeqIO
+from scipy.stats import ttest_ind
 from tqdm.auto import tqdm
 
 from src.constants import IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q3
 
 matplotlib.rcParams.update({"font.size": 15})
+matplotlib.rcParams.update({"patch.force_edgecolor": False})
 
 MHC_LIST = [
     "HLA-A01:01",
@@ -91,6 +94,12 @@ def score_sequence_nMp_with_dashes(seq, nMp_peptide_scores):
     return score / len(MHC_LIST), epitopes
 
 
+def t_test_pair(greater_dist, lower_dist):
+    stat, p_value = ttest_ind(greater_dist, lower_dist, alternative="greater")
+    print(f"T-test statistics: {stat}")
+    print(f"T-test p-value: {p_value}")
+
+
 def main():
     args = argument_parser()
 
@@ -99,9 +108,9 @@ def main():
     generated_seqs_new = {}
 
     if (
-        len(args.low_antigenicity_sequences_filepath)
-        & len(args.intermediate_antigenicity_sequences_filepath)
-        & len(args.high_antigenicity_sequences_filepath)
+        len(args.low_antigenicity_sequences_filepath) > 0
+        and len(args.intermediate_antigenicity_sequences_filepath) > 0
+        and len(args.high_antigenicity_sequences_filepath) > 0
     ):
         print("Computing 3 different netMHCpan score distributions")
         generated_sequences_paths = [
@@ -113,13 +122,17 @@ def main():
             generated_sequences_paths
         ):
             generated_seqs_new[immunogenicity_score] = {}
+            records = []
             for record in SeqIO.parse(generated_sequences_path, "fasta"):
+                records += [record]
+
+            for record in records[:-1]:
                 generated_seqs_new[immunogenicity_score].update(
                     {str(record.seq): int(record.id)}
                 )
                 seq_to_score.update({str(record.seq): int(record.id)})
 
-    if len(args.sequences_filepath):
+    if len(args.sequences_filepath) > 0:
         print("Computing netMHCpan scores for 1 sequence file")
         hits_save_path = args.sequences_filepath.replace(".fasta", "hits.npy")
         scores_save_path = args.sequences_filepath.replace(".fasta", "scores.npy")
@@ -147,39 +160,59 @@ def main():
         "Hits calculated, 1st and 3rd quantiles: ",
         np.quantile(list(nMp_seq_hits.values()), [0.25, 0.75]),
     )
-    if len(args.sequences_filepath):
+    if len(args.sequences_filepath) > 0:
+        print(f"Mean: {statistics.mean(list(nMp_seq_hits.values()))}")
+        print(f"std: {statistics.stdev(list(nMp_seq_hits.values()))}")
         np.save(hits_save_path, nMp_seq_hits, allow_pickle=True)
 
     nMp_scores = {}
     for sequence_key, nMp_score in nMp_seq_hits.items():
         if nMp_score <= IMMUNOGENICITY_Q1:
             nMp_scores[sequence_key] = 0
-        elif IMMUNOGENICITY_Q1 <= nMp_score <= IMMUNOGENICITY_Q3:
-            nMp_scores[sequence_key] = 1
         elif nMp_score > IMMUNOGENICITY_Q3:
             nMp_scores[sequence_key] = 2
+        else:
+            nMp_scores[sequence_key] = 1
 
-    if len(args.sequences_filepath):
+    if len(args.sequences_filepath) > 0:
         np.save(scores_save_path, nMp_scores, allow_pickle=True)
 
     if generated_seqs_new:
-        for immmunogenicity_score, generated_sequences in generated_seqs_new.items():
-            sns.distplot(
-                [
-                    nMp_seq_hits[seq]
-                    for seq in generated_sequences.keys()
-                    if nMp_seq_hits[seq] > 30
-                ],
-                15,
+        low_hits = []
+        medium_hits = []
+        high_hits = []
+        for immunogenicity_score, generated_sequences in generated_seqs_new.items():
+            sequence_hits = [nMp_seq_hits[seq] for seq in generated_sequences.keys()]
+
+            if immunogenicity_score == 0:
+                low_hits += sequence_hits
+            if immunogenicity_score == 1:
+                medium_hits += sequence_hits
+            if immunogenicity_score == 2:
+                high_hits += sequence_hits
+
+            print(
+                f"Statistics of sequences with immunogenicity of {immunogenicity_score}"
             )
+            print(f"Mean: {statistics.mean(sequence_hits)}")
+            print(f"Stddev: {statistics.stdev(sequence_hits)}")
+
+            sns.histplot(sequence_hits, stat="density", kde=True, bins=15)
+
+        print("Medium immunogenicity vs Low immunogenicity")
+        t_test_pair(medium_hits, low_hits)
+        print("High immunogenicity vs Medium immunogenicity")
+        t_test_pair(high_hits, medium_hits)
+        print("High immunogenicity vs Low immunogenicity")
+        t_test_pair(high_hits, low_hits)
 
         plt.legend(labels=["low", "medium", "high"])
         # 50.66667 nMp_seq_scores_p75: 51.16667
         plt.plot(
-            [IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q1], [0, 0.15], c="black", linewidth=0.5
+            [IMMUNOGENICITY_Q1, IMMUNOGENICITY_Q1], [0, 1.0], c="black", linewidth=0.5
         )
         plt.plot(
-            [IMMUNOGENICITY_Q3, IMMUNOGENICITY_Q3], [0, 0.15], c="black", linewidth=0.5
+            [IMMUNOGENICITY_Q3, IMMUNOGENICITY_Q3], [0, 1.0], c="black", linewidth=0.5
         )
         plt.xlabel("AS distribution generated samples")
         plt.savefig("AS distribution generated samples")

@@ -8,3 +8,4 @@ python-dotenv
 PyYAML
 tqdm
 wandb
+scipy==1.10.1
