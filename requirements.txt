@@ -9,3 +9,4 @@ PyYAML
 tqdm
 wandb
 scipy==1.10.1
+jupyterlab

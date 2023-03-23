@@ -32,8 +32,13 @@ class Vaxformer(nn.Module):
 
     def _build_model(self):
         self.amino_acid_embedding = nn.Embedding(self.vocab_size, self.hidden_dim)
+
+        transformer_input_dim = self.hidden_dim + self.immunogenicity_size * self.nhead
         self.immunogenicity_embedding = nn.Embedding(
-            self.immunogenicity_size, self.hidden_dim
+            self.immunogenicity_size, transformer_input_dim
+        )
+        self.immunogenicity_value_embedding = nn.Embedding(
+            self.immunogenicity_size, self.immunogenicity_size * self.nhead
         )
 
         self.positional_embedding = PositionalEncoder(
@@ -41,12 +46,14 @@ class Vaxformer(nn.Module):
         )
 
         transformer_layer = nn.TransformerDecoderLayer(
-            d_model=self.hidden_dim, nhead=self.nhead, batch_first=True
+            d_model=transformer_input_dim, nhead=self.nhead, batch_first=True
         )
-        layer_norm = nn.LayerNorm(self.hidden_dim)
+        layer_norm = nn.LayerNorm(transformer_input_dim)
         self.transformer = TransformerDecoder(
             transformer_layer, num_layers=self.num_layers, norm=layer_norm
         )
+
+        self.projection = nn.Linear(transformer_input_dim, self.hidden_dim)
 
     def forward(self, input_sequence, input_immunogenicity, mask=None):
         amino_acid_embedded = self.amino_acid_embedding(input_sequence)
@@ -56,9 +63,21 @@ class Vaxformer(nn.Module):
             input_immunogenicity
         ).unsqueeze(1)
 
+        immunogenicity_value_embedded = self.immunogenicity_value_embedding(
+            input_immunogenicity
+        ).unsqueeze(1)
+        # batch_size * len * 3
+        immunogenicity_value_embedded = immunogenicity_value_embedded.repeat(
+            1, amino_acid_positioned.size(1), 1
+        )
+        amino_acid_positioned = torch.cat(
+            (amino_acid_positioned, immunogenicity_value_embedded), dim=2
+        )
+
         amino_acid_decoded = self.transformer(
             amino_acid_positioned, memory=immunogenicity_embedded, tgt_mask=mask
         )
+        amino_acid_decoded = self.projection(amino_acid_decoded)
         out = amino_acid_decoded @ self.amino_acid_embedding.weight.T
 
         return out

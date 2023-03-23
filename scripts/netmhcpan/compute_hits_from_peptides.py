@@ -122,11 +122,7 @@ def main():
             generated_sequences_paths
         ):
             generated_seqs_new[immunogenicity_score] = {}
-            records = []
             for record in SeqIO.parse(generated_sequences_path, "fasta"):
-                records += [record]
-
-            for record in records[:-1]:
                 generated_seqs_new[immunogenicity_score].update(
                     {str(record.seq): int(record.id)}
                 )

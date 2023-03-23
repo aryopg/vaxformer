@@ -3,6 +3,8 @@
 
 This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2" (in writing)
 
+> The SARS-CoV-2 pandemic has emphasised the importance of developing a universal vaccine that can protect against current and future variants of the virus. However, research in the field of protein design is limited despite the advancements in AI and our knowledge of the human immune system. In this context, the present study proposes a novel conditional protein Language Model architecture, called Vaxformer, which is designed to produce immunogenicity-controlled SARS-CoV-2 spike proteins. We evaluate the generated protein sequences of the Vaxformer model using DDGun protein stability measure, netMHCpan immunogenicity score, and root mean square deviation of the folded protein and a Covid reference protein to gauge its viability for vaccine development. Our results show that Vaxformer outperforms the existing state-of-the-art Conditional Variational Autoencoder model to generate immunogenicity-controlled SARS-CoV-2 spike proteins. These findings suggest promising opportunities for Conditional Transformer models to expand our understanding of vaccine design and their role in mitigating global health challenges.
+
 Authors (equal contribution):
 - [Aryo Pradipta Gema](https://aryopg.github.io/)
 - [Michał Kobiela](https://www.linkedin.com/in/michal-kobiela137/)
@@ -46,6 +48,7 @@ This codebase requires the following dependencies:
 - PyYAML
 - tqdm
 - wandb
+- jupyterlab
 ```
 
 We opted in to using conda as our package manager. The following will install all necessary dependencies for a GPU training:
@@ -102,11 +105,11 @@ To obtain comparable data splits, we inquired to [the author of the previous pub
 │   │   ├── compute_hits_from_peptides.py         # Script to compute netMHCpan hits and scores from peptides
 │   │   └── generate_peptides_from_sequences.py   # Script to generate peptides from sequences
 │   ├── evaluation/
-│   │   ├── alphafold.sh                          # Script to
-│   │   ├── ddGun.sh                              # Script to
-│   │   ├── create_data_for_ddgun.ipynb           # Notebook for 
-│   │   ├── dd_eval.ipynb                         # Notebook for 
-│   │   └── evaluation.ipynb                      # Notebook for 
+│   │   ├── alphafold.sh                          # Script to run the AlphaFold evaluation
+│   │   ├── ddGun.sh                              # Script to run the DDGun evaluation
+│   │   ├── create_data_for_ddgun.ipynb           # Notebook to create the necessary data for DDGun run
+│   │   ├── dd_eval.ipynb                         # Notebook to read the DDGun evaluation and find the top 10 proteins
+│   │   └── evaluation.ipynb                      # Notebook for PCA evaluation
 │   ├── baseline/
 │   │   └── naive_bayes.ipynb                     # Notebook for 
 │   ├── slurm/                                    # Slurm scripts for training and sampling runs
@@ -266,8 +269,8 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 | LSTM-small          | 1.019     | 1.021     |
 | LSTM-base           | 1.016     | 1.018     |
 | LSTM-large          | 1.016     | 1.019     |
-| Vaxformer-small     | 1.052     | 1.049     |
-| Vaxformer-base      | 1.015     | 1.026     |
+| Vaxformer-small     | 1.034     | 1.128     |
+| Vaxformer-base      | 1.014     | 1.043     |
 | **Vaxformer-large** | **1.013** | **1.014** |
 
 ### DDGun
