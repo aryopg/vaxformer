@@ -10,3 +10,4 @@ tqdm
 wandb
 scipy==1.10.1
 jupyterlab
+scikit-learn==1.2.2

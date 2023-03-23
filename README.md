@@ -28,6 +28,7 @@ Authors (equal contribution):
   - [netMHCpan](#netmhcpan-1)
   - [AlphaFold 2](#alphafold-2-1)
 - [⚖️ Results](#️-results)
+  - [PCA](#pca)
   - [Perplexity](#perplexity)
   - [DDGun](#ddgun-2)
   - [AlphaFold2](#alphafold2)
@@ -262,6 +263,10 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 
 ## ⚖️ Results
 
+### PCA
+
+<img src="assets/pca_square.png" width=500>
+
 ### Perplexity
 
 | Model               | Train     | Val.      |
@@ -280,3 +285,11 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 
 
 ### netMHCpan
+
+| Model               | med-low   | high-med  | high-low  |
+|---------------------|-----------|-----------|-----------|
+| VAE                 | 16.51     | 33.39     | 44.36     |
+| LSTM-base           | 15.83     | 18.93     | 34.65     |
+| **Vaxformer-large** | **40.35** | **64.64** | **94.63** |
+
+<img src="assets/netMHCpan.png" width=900>
