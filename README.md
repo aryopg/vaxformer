@@ -1,7 +1,7 @@
 <!-- omit in toc -->
-# Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2
+# Vaxformer: Anti-controlled Transformer for Vaccine Design Against SARS-CoV-2
 
-This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2" (in writing)
+This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Anti-controlled Transformer for Vaccine Design Against SARS-CoV-2" (in writing)
 
 <img src="assets/vaxformer.png">
 
