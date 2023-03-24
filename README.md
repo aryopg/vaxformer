@@ -3,6 +3,9 @@
 
 This repository contains pre-trained models, corpora, indices, and code for pre-training, finetuning, retrieving and evaluating for "Vaxformer: Immunogenicity-controlled Transformer for Vaccine Design Against SARS-CoV-2" (in writing)
 
+<img src="assets/vaxformer.png">
+
+
 > The SARS-CoV-2 pandemic has emphasised the importance of developing a universal vaccine that can protect against current and future variants of the virus. However, research in the field of protein design is limited despite the advancements in AI and our knowledge of the human immune system. In this context, the present study proposes a novel conditional protein Language Model architecture, called Vaxformer, which is designed to produce antigenicity-controlled SARS-CoV-2 spike proteins. We evaluate the generated protein sequences of the Vaxformer model using DDGun protein stability measure, netMHCpan antigenicity score, and a structure fidelity score using the root mean square deviation between the protein folded with AlphaFold and a Covid reference protein to gauge its viability for vaccine development. Our results show that Vaxformer outperforms the existing state-of-the-art Conditional Variational Autoencoder model to generate antigenicity-controlled SARS-CoV-2 spike proteins. These findings suggest promising opportunities for Conditional Transformer models to expand our understanding of vaccine design and their role in mitigating global health challenges.
 
 Authors (equal contribution):
@@ -30,8 +33,7 @@ Authors (equal contribution):
 - [⚖️ Results](#️-results)
   - [PCA](#pca)
   - [Perplexity](#perplexity)
-  - [DDGun](#ddgun-2)
-  - [AlphaFold2](#alphafold2)
+  - [DDGun \& RMSD](#ddgun--rmsd)
   - [netMHCpan](#netmhcpan-2)
 
 
@@ -278,11 +280,17 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 | Vaxformer-base      | 1.014     | 1.043     |
 | **Vaxformer-large** | **1.013** | **1.014** |
 
-### DDGun
+### DDGun & RMSD
 
+<img src="assets/folded_proteins.png" width=900>
 
-### AlphaFold2
-
+| Model           | RMSD (\AA)                | $\Delta \Delta G$ (KCAL/MOL) |
+|----------------|--------------------------|------------------------------|
+| Random Mutation | **0.32 $\pm$ 0.23** | -2.51 $\pm$ 0.31             |
+| Naive Bayes     | $0.59 \pm 0.23$         | -0.5 $\pm$ 0.30              |
+| VAE             | 0.48 $\pm$ 0.28          | -5.17 $\pm$ 0.51             |
+| LSTM-base       | 0.51 $\pm$ 0.17          | -4.95 $\pm$ 1.09             |
+| Vaxformer-large | 0.67 $\pm$ 0.31          | **-5.45 $\pm$ 0.72**         |
 
 ### netMHCpan
 
