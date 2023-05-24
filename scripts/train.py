@@ -20,7 +20,7 @@ from src.utils import common_utils
 
 def argument_parser():
     parser = argparse.ArgumentParser(
-        description="Protein Knowledge Graph Embedding Project"
+        description="Vaxformer project"
     )
     parser.add_argument("--config_filepath", type=str, required=True)
     parser.add_argument("--log_to_wandb", action="store_true")
