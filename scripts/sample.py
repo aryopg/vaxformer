@@ -23,7 +23,7 @@ from src.utils import common_utils, model_utils
 
 def argument_parser():
     parser = argparse.ArgumentParser(
-        description="Protein Knowledge Graph Embedding Project"
+        description="Vaxformer project"
     )
     parser.add_argument("--config_filepath", type=str, required=True)
     parser.add_argument("--num_sequences", type=int, required=True)
