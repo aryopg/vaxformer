@@ -294,10 +294,47 @@ where `wuhan_alphafold` denotes the reference protein and `protein_to_evaluate` 
 
 ### netMHCpan
 
-| Model               | med-low   | high-med  | high-low  |
-|---------------------|-----------|-----------|-----------|
-| VAE                 | 16.51     | 33.39     | 44.36     |
-| LSTM-base           | 15.83     | 18.93     | 34.65     |
-| **Vaxformer-large** | **40.35** | **64.64** | **94.63** |
+<table>
+  <tr>
+    <th rowspan="2">Model</th>
+    <th colspan="3">T-statistics</th>
+    <th colspan="3">U-statistics</th>
+  </tr>
+  <tr>
+    <th>Medium-Low</th>
+    <th>High-Medium</th>
+    <th>High-Low</th>
+    <th>Medium-Low</th>
+    <th>High-Medium</th>
+    <th>High-Low</th>
+  </tr>
+  <tr>
+    <td>VAE</td>
+    <td>15.22</td>
+    <td>27.68</td>
+    <td>39.17</td>
+    <td>3.99 × 10<sup>5</sup></td>
+    <td>4.73 × 10<sup>5</sup></td>
+    <td>5.23 × 10<sup>5</sup></td>
+  </tr>
+  <tr>
+    <td>LSTM-base</td>
+    <td>14.23</td>
+    <td>16.83</td>
+    <td>29.75</td>
+    <td>4.45 × 10<sup>5</sup></td>
+    <td>4.37 × 10<sup>5</sup></td>
+    <td>5.16 × 10<sup>5</sup></td>
+  </tr>
+  <tr>
+    <td><strong>Vaxformer-large</strong></td>
+    <td><strong>26.30</strong></td>
+    <td><strong>38.02</strong></td>
+    <td><strong>56.62</strong></td>
+    <td><strong>4.75 × 10<sup>5</sup></strong></td>
+    <td><strong>5.21 × 10<sup>5</sup></strong></td>
+    <td><strong>5.56 × 10<sup>5</sup></strong></td>
+  </tr>
+</table>
 
 <img src="assets/netMHCpan.png" width=900>
