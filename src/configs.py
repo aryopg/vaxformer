@@ -25,7 +25,7 @@ class HyperparametersConfigs(BaseModel):
     # VAE specific
     hidden_dims: Optional[List[int]] = [2048, 1024, 512, 256, 128]
     latent_dim: Optional[int] = 2
-    kl_target: Optional[int] = 0.1
+    kl_target: Optional[float] = 0.1
     # Language Model specific
     embedding_dim: Optional[int] = 32
     hidden_dim: Optional[int] = 512
