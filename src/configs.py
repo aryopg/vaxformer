@@ -35,8 +35,8 @@ class HyperparametersConfigs(BaseModel):
 
 class ModelConfigs(BaseModel):
     model_type: str
-    model_state_dict_path: Optional[str]
-    hyperparameters: Optional[HyperparametersConfigs]
+    model_state_dict_path: Optional[str] = None
+    hyperparameters: Optional[HyperparametersConfigs] = None
 
 
 class SetupConfigs(BaseModel):
